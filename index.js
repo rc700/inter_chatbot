@@ -84,10 +84,14 @@ bot.dialog('A', [
 bot.dialog('B', [
 
     function (session) {
-
+        builder.Prompts.text(session, "Enter a pokedex number")
     },
 
     function (session, results) {
+        getData(results.response, function(msg){
+            parsed = JSON.parse(msg)
+            session.endDialog(String(parsed.forms[0]['name']))
+        });
 
     }
 
@@ -97,16 +101,24 @@ bot.dialog('B', [
 
 });
 
+function getData(data, cb){
+    request('http://pokeapi.co/api/v2/pokemon/' + data, function(error, response, body){
+        cb(body);
+    })
+}
+
 bot.dialog('C', [
 
     function (session) {
 
- 
+        builder.Prompts.text(session, "Enter text")
 
     },
 
     function (session, results) {
-
+        postData(results.response, function(msg){
+            session.send(msg);
+        });
     }
 
 ]).triggerAction({
@@ -115,14 +127,31 @@ bot.dialog('C', [
 
 });
 
+function postData(data, cb){
+    request.post({
+        url: 'https://requestb.in/1hbquhv1',
+        body: data
+    }, function(error, response, body){
+        cb(body)
+    });
+}
+
+var cardNames = ["hero card"]
+
 bot.dialog('D', [
 
     function (session) {
-
+        builder.Prompts.choice(session, "what card?", cardNames, {
+            maxRetries: 3,
+            retryPrompt: "you entered something wrong"
+        });
     },
 
     function (session, results) {
-
+        var selectedCardName = results.response.entity;
+        var card = createCard(selectedCardName, session)
+        var msg = new builder.Message(session).addAttachment(card)
+        session.send(msg)
     }
 
 ]).triggerAction({
@@ -130,3 +159,23 @@ bot.dialog('D', [
     matches: /^d$/i
 
 });
+
+function createCard(selectedCardName, session){
+    switch(selectedCardName){
+        case "hero card":
+        return createHeroCard(session)
+    }
+}
+
+function createHeroCard(session){
+    return new builder.HeroCard(session)
+    .title('This is a hero card')
+    .subtitle('bots are cool')
+    .text('text body content')
+    .images([
+        builder.CardImage.create(session, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS__T083aQoYWobj_e4vZ8g3BxiGbZpkVGe8BNiqehScu8RvqXO')
+    ])
+    .buttons([
+        builder.CardAction.openUrl(session, 'https://www.google.com', 'click me')
+    ])
+}
