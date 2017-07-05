@@ -37,10 +37,25 @@ server.post('/botB', connector.listen());
 //entry point for branches and receving an image
 
 var bot = new builder.UniversalBot(connector, function(session){
-    // Echo bakc user's text
+
+    var msg = session.message;
+    if(msg.attachments && msg.attachments.length >0){
+        var attachment = msg.attachments[0];
+        session.send({
+            text: "here is your image",
+            attachments: [{
+                contentType: attachment.contentType,
+                contentUrl : attachment.contentUrl,
+                name : attachment.name
+
+            }]
+        });
+    } else {
+        
+    // Echo back user's text
     var msg = "choose A B C or D";
     session.endDialog(msg);
-
+    }
 });
 
 bot.dialog('A', [
