@@ -137,11 +137,12 @@ function postData(data, cb){
 }
 
 var cardNames = ["hero card", "animation card"]
+var cardNames2 = ["sad", "happy", "stressed", "tired"]
 
 bot.dialog('D', [
 
     function (session) {
-        builder.Prompts.choice(session, "what card?", cardNames, {
+        builder.Prompts.choice(session, "How do you feel?", cardNames2, {
             maxRetries: 3,
             retryPrompt: "you entered something wrong"
         });
@@ -162,10 +163,14 @@ bot.dialog('D', [
 
 function createCard(selectedCardName, session){
     switch(selectedCardName){
-        case "hero card":
-        return createHeroCard(session)
-        case "animation card":
-        return createAnimationCard(session)
+        case "sad":
+        return createSadAnimationCard(session)
+        case "happy":
+        return createHappyAnimationCard(session)
+        case "stressed":
+        return createStressedAnimationCard(session)
+        case "tired":
+        return createTiredAnimationCard(session)
     }
 }
 
@@ -182,11 +187,38 @@ function createHeroCard(session){
     ])
 }
 
-function createAnimationCard(session){
+function createSadAnimationCard(session){
     return new builder.AnimationCard(session)
-    .title('Puppy GIF of the day')
-    .subtitle('Daily Puppy')
+    .title('Here is a puppy to cheer you up')
+    .subtitle('Feel better soon!')
     .media([
         builder.CardMedia.create(session, 'https://68.media.tumblr.com/d0e1c39e2924731d016b2a4236a3d519/tumblr_nvrm5vqjuA1qbxi45o1_400.gif')
+    ])
+}
+
+function createHappyAnimationCard(session){
+    return new builder.AnimationCard(session)
+    .title('This puppy is nearly as happy as you!')
+    .subtitle('Happy pupper')
+    .media([
+        builder.CardMedia.create(session, 'https://media.giphy.com/media/oNhDOS8SauQSI/giphy.gif')
+    ])
+}
+
+function createStressedAnimationCard(session){
+    return new builder.AnimationCard(session)
+    .title('This puppy thinks you need to chill')
+    .subtitle('Be chill')
+    .media([
+        builder.CardMedia.create(session, 'http://www.gifbin.com/bin/042012/1334861656_corgi_gets_vacuumed.gif')
+    ])
+}
+
+function createTiredAnimationCard(session){
+    return new builder.AnimationCard(session)
+    .title('This puppy thinks you need to nap')
+    .subtitle('Just not a catnap')
+    .media([
+        builder.CardMedia.create(session, 'https://az616578.vo.msecnd.net/files/2016/03/21/635941925186353378-1061990048_yawm.gif')
     ])
 }
