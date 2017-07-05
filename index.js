@@ -136,7 +136,7 @@ function postData(data, cb){
     });
 }
 
-var cardNames = ["hero card"]
+var cardNames = ["hero card", "animation card"]
 
 bot.dialog('D', [
 
@@ -164,6 +164,8 @@ function createCard(selectedCardName, session){
     switch(selectedCardName){
         case "hero card":
         return createHeroCard(session)
+        case "animation card":
+        return createAnimationCard(session)
     }
 }
 
@@ -177,5 +179,14 @@ function createHeroCard(session){
     ])
     .buttons([
         builder.CardAction.openUrl(session, 'https://www.google.com', 'click me')
+    ])
+}
+
+function createAnimationCard(session){
+    return new builder.AnimationCard(session)
+    .title('Puppy GIF of the day')
+    .subtitle('Daily Puppy')
+    .media([
+        builder.CardMedia.create(session, 'https://68.media.tumblr.com/d0e1c39e2924731d016b2a4236a3d519/tumblr_nvrm5vqjuA1qbxi45o1_400.gif')
     ])
 }
